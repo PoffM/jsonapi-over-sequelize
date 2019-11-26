@@ -1,0 +1,22 @@
+version: "3.6"
+services:
+  db:
+    image: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: companydb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: p
+    ports:
+      - "5432:5432"
+  flyway:
+    image: boxfuse/flyway:5.2.4
+    command: -url=jdbc:postgresql://db/companydb -schemas=company -user=postgres -password=p -connectRetries=60 migrate
+    volumes:
+      - ./migrations:/flyway/sql
+    depends_on:
+      - db
+volumes:
+  pg_data:
+    driver: local
